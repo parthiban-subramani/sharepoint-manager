@@ -1,58 +1,63 @@
-const { getSites, searchSites, getFollowedSites, getDocuments, getDocumentLibraries } = require('../lib/index');
+const SharePointManager = require('../index');
 const makeRequest = require('../utils/makeRequest');
 const { msGraphUrl } = require('../utils/url');
 
 jest.mock('../utils/makeRequest');
 
-describe('Site functions', () => {
-    const token = 'testToken';
+describe('SharePointManager', () => {
+    let manager;
+    const bearerToken = 'test-token';
 
-    test('getSites returns expected data', async () => {
-        const mockData = { data: 'testData' };
-        makeRequest.mockResolvedValue(mockData);
-
-        const result = await getSites(token);
-        expect(result).toEqual(mockData);
-        expect(makeRequest).toHaveBeenCalledWith(`${msGraphUrl}/sites?search=*`, token);
+    beforeEach(() => {
+        manager = new SharePointManager(bearerToken);
     });
 
-    test('searchSites returns expected data', async () => {
-        const searchString = 'testSearch';
-        const mockData = { data: 'testData' };
-        makeRequest.mockResolvedValue(mockData);
+    test('searchSites calls makeRequest with correct URL', async () => {
+        const searchString = 'test-site';
+        const expectedUrl = `${msGraphUrl}/sites?search=${searchString}`;
+        makeRequest.mockResolvedValue({});
 
-        const result = await searchSites(token, searchString);
-        expect(result).toEqual(mockData);
-        expect(makeRequest).toHaveBeenCalledWith(`${msGraphUrl}/sites?search=${searchString}`, token);
+        await manager.searchSites(searchString);
+
+        expect(makeRequest).toHaveBeenCalledWith(expectedUrl, bearerToken);
     });
 
-    test('getFollowedSites returns expected data', async () => {
-        const mockData = { data: 'testData' };
-        makeRequest.mockResolvedValue(mockData);
+    test('getSites calls makeRequest with correct URL', async () => {
+        const expectedUrl = `${msGraphUrl}/sites?search=*`;
+        makeRequest.mockResolvedValue({});
 
-        const result = await getFollowedSites(token);
-        expect(result).toEqual(mockData);
-        expect(makeRequest).toHaveBeenCalledWith(`${msGraphUrl}/me/followedSites`, token);
+        await manager.getSites();
+
+        expect(makeRequest).toHaveBeenCalledWith(expectedUrl, bearerToken);
     });
 
-    test('getDocumentLibraries returns expected data', async () => {
-        const siteId = 'testSiteId';
-        const mockData = { data: 'testData' };
-        makeRequest.mockResolvedValue(mockData);
+    test('getFollowedSites calls makeRequest with correct URL', async () => {
+        const expectedUrl = `${msGraphUrl}/me/followedSites`;
+        makeRequest.mockResolvedValue({});
 
-        const result = await getDocumentLibraries(token, siteId);
-        expect(result).toEqual(mockData);
-        expect(makeRequest).toHaveBeenCalledWith(`${msGraphUrl}/sites/${siteId}/drives`, token);
+        await manager.getFollowedSites();
+
+        expect(makeRequest).toHaveBeenCalledWith(expectedUrl, bearerToken);
     });
 
-    test('getDocuments returns expected data', async () => {
-        const siteId = 'testSiteId';
-        const driveId = 'testDriveId';
-        const mockData = { data: 'testData' };
-        makeRequest.mockResolvedValue(mockData);
+    test('getDocumentLibraries calls makeRequest with correct URL', async () => {
+        const siteId = 'test-site-id';
+        const expectedUrl = `${msGraphUrl}/sites/${siteId}/drives`;
+        makeRequest.mockResolvedValue({});
 
-        const result = await getDocuments(siteId, token, driveId);
-        expect(result).toEqual(mockData);
-        expect(makeRequest).toHaveBeenCalledWith(`${msGraphUrl}/sites/${siteId}/drives/${driveId}/items/root/children`, token);
+        await manager.getDocumentLibraries(siteId);
+
+        expect(makeRequest).toHaveBeenCalledWith(expectedUrl, bearerToken);
+    });
+
+    test('getDocuments calls makeRequest with correct URL', async () => {
+        const siteId = 'test-site-id';
+        const driveId = 'test-drive-id';
+        const expectedUrl = `${msGraphUrl}/sites/${siteId}/drives/${driveId}/items/root/children`;
+        makeRequest.mockResolvedValue({});
+
+        await manager.getDocuments(siteId, driveId);
+
+        expect(makeRequest).toHaveBeenCalledWith(expectedUrl, bearerToken);
     });
 });
