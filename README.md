@@ -39,7 +39,7 @@ For more information on the available methods and their parameters, please refer
 
 ## Contributing
 
-Contributions are welcome! If you have any suggestions, bug reports, or feature requests, please open an issue on the [GitHub repository](https://github.com/your-username/sharepoint-manager).
+Contributions are welcome! If you have any suggestions, bug reports, or feature requests, please open an issue on the [GitHub repository](https://github.com/parthiban-subramani/sharepoint-manager).
 
 ## License
 
