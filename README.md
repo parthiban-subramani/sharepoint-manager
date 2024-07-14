@@ -35,8 +35,6 @@ const siteContents = await manager.listSiteContents(siteId);
 
 Make sure to replace `'YOUR_BEARER_TOKEN'` with your actual Bearer token and `'SITE_ID'` with the ID of the site you want to perform operations on.
 
-For more information on the available methods and their parameters, please refer to the [API documentation](https://github.com/your-username/sharepoint-manager/docs/api.md).
-
 ## Contributing
 
 Contributions are welcome! If you have any suggestions, bug reports, or feature requests, please open an issue on the [GitHub repository](https://github.com/parthiban-subramani/sharepoint-manager).
