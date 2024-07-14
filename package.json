@@ -1,6 +1,6 @@
 {
     "name": "sharepoint-manager",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "A package for managing SharePoint using MS Graph",
     "main": "index.js",
     "scripts": {
