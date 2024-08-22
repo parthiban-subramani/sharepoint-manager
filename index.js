@@ -1,59 +1,38 @@
-const { msGraphUrl } = require('./utils/url');
-const makeRequest = require('./utils/makeRequest');
+const SharePointManager = require('./SharePointManager');
+const OneDriveManager = require('./OneDriveManager');
 
-class SharePointManager {
-    constructor(bearerToken) {
-        this.bearerToken = bearerToken;
-    }
+const sharePointManager = new SharePointManager();
+const oneDriveManager = new OneDriveManager('your-access-token-here'); // Replace with actual access token
 
-    /**
-     * Searches for sites based on a search string.
-     * @param {string} searchString - The search string.
-     * @returns {Promise<Object>} The search results.
-     */
-    async searchSites(searchString) {
-        const url = `${msGraphUrl}/sites?search=${searchString}`;
-        return await makeRequest(url, this.bearerToken);
-    }
+async function main() {
+  try {
+    // SharePoint operations
+    console.log('SharePoint operations:');
+    const spFiles = await sharePointManager.getFiles('/Documents');
+    console.log('SharePoint files:', spFiles);
 
-    /**
-     * Retrieves all sites.
-     * @returns {Promise<Object>} The sites data.
-     */
-    async getSites() {
-        const url = `${msGraphUrl}/sites?search=*`;
-        return await makeRequest(url, this.bearerToken);
-    }
+    const spFile = { name: 'test.txt', content: 'Hello SharePoint!' };
+    const uploadedSpFile = await sharePointManager.uploadFile('/Documents', spFile);
+    console.log('Uploaded file to SharePoint:', uploadedSpFile);
 
-    /**
-     * Retrieves the followed sites of the authenticated user.
-     * @returns {Promise<Object>} The followed sites data.
-     */
-    async getFollowedSites() {
-        const url = `${msGraphUrl}/me/followedSites`;
-        return await makeRequest(url, this.bearerToken);
-    }
+    await sharePointManager.deleteFile('/Documents/test.txt');
+    console.log('Deleted file from SharePoint');
 
-    /**
-     * Retrieves document libraries for a specific site.
-     * @param {string} siteId - The ID of the site.
-     * @returns {Promise<Object>} The document libraries data.
-     */
-    async getDocumentLibraries(siteId) {
-        const url = `${msGraphUrl}/sites/${siteId}/drives`;
-        return await makeRequest(url, this.bearerToken);
-    }
+    // OneDrive operations
+    console.log('\nOneDrive operations:');
+    const odFiles = await oneDriveManager.getFiles();
+    console.log('OneDrive files:', odFiles);
 
-    /**
-     * Retrieves documents from a specific drive in a site.
-     * @param {string} siteId - The ID of the site.
-     * @param {string} driveId - The ID of the drive.
-     * @returns {Promise<Object>} The documents data.
-     */
-    async getDocuments(siteId, driveId) {
-        const url = `${msGraphUrl}/sites/${siteId}/drives/${driveId}/items/root/children`;
-        return await makeRequest(url, this.bearerToken);
-    }
+    const odFile = { name: 'test.txt', content: 'Hello OneDrive!' };
+    const uploadedOdFile = await oneDriveManager.uploadFile('/', odFile);
+    console.log('Uploaded file to OneDrive:', uploadedOdFile);
+
+    await oneDriveManager.deleteFile(uploadedOdFile.id);
+    console.log('Deleted file from OneDrive');
+
+  } catch (error) {
+    console.error('An error occurred:', error);
+  }
 }
 
-module.exports = SharePointManager;
+main();
